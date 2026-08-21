@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from "react";
+import { useLayoutEffect, useMemo, useRef, useState } from "react";
 import { Icon } from "./Icon";
 import { formatIDR } from "@/lib/app-store";
 import {
@@ -41,6 +41,15 @@ export function BillingCalendar({ bills, today = new Date() }: { bills: Bill[]; 
   const [cursor, setCursor] = useState(() => ({ year: today.getFullYear(), month: today.getMonth() }));
   const [selected, setSelected] = useState(todayIso);
   const gridRef = useRef<HTMLDivElement>(null);
+  // Set when a keyboard interaction moved the selection: focus must follow the
+  // newly rendered day button synchronously after React commits the update.
+  const pendingFocus = useRef(false);
+
+  useLayoutEffect(() => {
+    if (!pendingFocus.current) return;
+    pendingFocus.current = false;
+    gridRef.current?.querySelector<HTMLButtonElement>('[data-day="selected"]')?.focus();
+  });
 
   const byDate = useMemo(() => {
     const map = new Map<string, Bill[]>();
@@ -67,9 +76,7 @@ export function BillingCalendar({ bills, today = new Date() }: { bills: Bill[]; 
     const clamped = Math.min(day, new Date(Date.UTC(y, m + 1, 0)).getUTCDate());
     setCursor({ year: y, month: m });
     setSelected(iso(y, m, clamped));
-    requestAnimationFrame(() => {
-      gridRef.current?.querySelector<HTMLButtonElement>('[data-day="selected"]')?.focus();
-    });
+    pendingFocus.current = true;
   };
 
   const onKeyDown = (event: React.KeyboardEvent<HTMLButtonElement>, day: number) => {

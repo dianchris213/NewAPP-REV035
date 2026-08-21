@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useLayoutEffect, useMemo, useRef, useState } from "react";
 import { Icon } from "./Icon";
 import { formatDueDate, isIsoDate } from "@/lib/billing";
 
@@ -43,16 +43,21 @@ export function DueDatePicker({
   const gridRef = useRef<HTMLDivElement>(null);
   const toggleRef = useRef<HTMLButtonElement>(null);
 
-  useEffect(() => {
+  const restoreFocus = useRef(false);
+
+  useLayoutEffect(() => {
     if (open) setCursor(base);
   }, [open, base]);
 
-  useEffect(() => {
-    if (!open) return;
-    const id = requestAnimationFrame(() => {
+  useLayoutEffect(() => {
+    if (open) {
       gridRef.current?.querySelector<HTMLButtonElement>('[data-day="active"]')?.focus();
-    });
-    return () => cancelAnimationFrame(id);
+      return;
+    }
+    if (restoreFocus.current) {
+      restoreFocus.current = false;
+      toggleRef.current?.focus();
+    }
   }, [open, cursor]);
 
   const { year, month } = cursor;
@@ -70,11 +75,12 @@ export function DueDatePicker({
     : null;
   const focusDay = activeDay ?? Math.min(Number(todayIso.slice(8, 10)), daysInMonth);
 
-  const close = (restoreFocus = true) => {
+  // The focused day button unmounts with the popover, which would send focus to
+  // <body>. The layout effect above restores it synchronously after the commit,
+  // so no rAF timing is involved and tests never race the browser.
+  const close = (shouldRestoreFocus = true) => {
+    restoreFocus.current = shouldRestoreFocus;
     setOpen(false);
-    // The focused day button unmounts with the popover, which would send focus
-    // to <body>. Restore on the next frame, after React committed the close.
-    if (restoreFocus) requestAnimationFrame(() => toggleRef.current?.focus());
   };
 
 
