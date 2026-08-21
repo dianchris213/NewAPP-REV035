@@ -76,3 +76,105 @@ jobs:
             e2e/__screenshots__/
           if-no-files-found: ignore
           retention-days: 14
+
+  # Dedicated gate: focus-trap / Escape-scope regressions in BillingCalendar and
+  # DueDatePicker fail the PR on their own, before the slower full suite result
+  # is available, and with no retries so a "flaky pass" cannot hide a regression.
+  billing-a11y:
+    name: Billing a11y (focus trap + Escape)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+      - name: Cache Bun + node_modules
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.bun/install/cache
+            node_modules
+          key: ${{ runner.os }}-bun-${{ hashFiles('bun.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-bun-
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+      - name: Cache Playwright browsers
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ hashFiles('bun.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-playwright-
+      - name: Install Playwright browsers
+        run: bunx playwright install --with-deps chromium
+      - name: BillingCalendar + DueDatePicker a11y specs
+        timeout-minutes: 10
+        run: bun run e2e:a11y -- --retries=0 --trace=retain-on-failure
+      - name: Upload a11y artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: billing-a11y-artifacts-${{ github.run_attempt }}
+          path: |
+            test-results/
+            playwright-report/
+          if-no-files-found: ignore
+          retention-days: 14
+
+  # Visual regression for BillingCalendar / BillingSheet against the committed
+  # baselines in e2e/__screenshots__ with the documented thresholds
+  # (threshold 0.1, maxDiffPixelRatio 0.005 - see playwright.config.ts).
+  #
+  # APPROVING AN INTENTIONAL UI CHANGE:
+  #   1. Download the "billing-visual-artifacts" artifact and inspect the
+  #      *-diff.png / *-actual.png images - confirm every changed pixel is
+  #      intended.
+  #   2. Locally run: bun run e2e:update:billing
+  #   3. Commit the regenerated PNGs in the SAME PR as the UI change and list
+  #      the moved baselines in the PR description.
+  # Never loosen the thresholds to make a red baseline pass.
+  billing-visual:
+    name: Billing visual regression
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+      - name: Cache Bun + node_modules
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.bun/install/cache
+            node_modules
+          key: ${{ runner.os }}-bun-${{ hashFiles('bun.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-bun-
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+      - name: Cache Playwright browsers
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ hashFiles('bun.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-playwright-
+      - name: Install Playwright browsers
+        run: bunx playwright install --with-deps chromium
+      - name: BillingCalendar / BillingSheet baselines
+        timeout-minutes: 10
+        run: bun run e2e:visual:billing -- --trace=retain-on-failure
+      - name: Upload visual diffs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: billing-visual-artifacts-${{ github.run_attempt }}
+          path: |
+            test-results/
+            playwright-report/
+            e2e/__screenshots__/
+          if-no-files-found: ignore
+          retention-days: 14
