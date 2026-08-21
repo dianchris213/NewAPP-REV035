@@ -71,7 +71,11 @@ describe("deep-link encoding — emojis and non-ASCII", () => {
 
 describe("deep-link encoding — whitespace", () => {
   it("encodes spaces as %20 and never as '+'", () => {
-    const link = buildWhatsAppLink({ ...base, name: "Internet Rumah" }, defaultBillingProfile, TODAY);
+    const link = buildWhatsAppLink(
+      { ...base, name: "Internet Rumah" },
+      defaultBillingProfile,
+      TODAY,
+    );
     expect(link).toContain("%20");
     expect(link.split("?text=")[1]).not.toContain("+");
     expect(decodedText({ name: "Internet Rumah" })).toContain("Internet Rumah");
@@ -104,11 +108,7 @@ describe("deep-link encoding — whitespace", () => {
 
 describe("deep-link encoding — already-encoded input", () => {
   it("double-encodes a literal percent sequence so it decodes back verbatim", () => {
-    const link = buildWhatsAppLink(
-      { ...base, name: "Diskon%2050" },
-      defaultBillingProfile,
-      TODAY,
-    );
+    const link = buildWhatsAppLink({ ...base, name: "Diskon%2050" }, defaultBillingProfile, TODAY);
     expect(link).toContain("Diskon%252050");
     expect(decodedText({ name: "Diskon%2050" })).toContain("Diskon%2050");
   });
