@@ -46,6 +46,16 @@ export function DueDatePicker({
   const [cursor, setCursor] = useState(base);
   const gridRef = useRef<HTMLDivElement>(null);
   const toggleRef = useRef<HTMLButtonElement>(null);
+  const popoverRef = useRef<HTMLDivElement>(null);
+
+  /** Tab-order of the popover's own controls (roving grid = one day button). */
+  const focusables = (): HTMLElement[] =>
+    Array.from(
+      popoverRef.current?.querySelectorAll<HTMLElement>(
+        'button:not([disabled]):not([tabindex="-1"]), [tabindex="0"]',
+      ) ?? [],
+    );
+
 
   const restoreFocus = useRef(false);
 
