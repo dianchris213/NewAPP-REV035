@@ -122,6 +122,8 @@ export function DueDatePicker({
         return step(daysInMonth - day + 1);
       case "Escape":
         event.preventDefault();
+        // Keep the parent sheet open: Escape only dismisses the popover.
+        event.stopPropagation();
         return close();
       default:
         return undefined;
@@ -158,7 +160,10 @@ export function DueDatePicker({
           data-testid="billing-due-date-popover"
           className="mt-1 rounded-2xl border border-outline-variant/20 bg-surface-container-high p-3 shadow-xl"
           onKeyDown={(event) => {
-            if (event.key === "Escape") close();
+            if (event.key !== "Escape") return;
+            event.preventDefault();
+            event.stopPropagation();
+            close();
           }}
         >
           <div className="mb-2 grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2">
