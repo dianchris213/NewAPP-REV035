@@ -19,7 +19,13 @@ export default defineConfig({
    * of being reported as a hard failure. Every retry keeps its own trace.
    */
   retries: process.env["CI"] ? 2 : 1,
-  reporter: [["list"], ["html", { open: "never", outputFolder: "playwright-report" }]],
+  reporter: [
+    ["list"],
+    ["html", { open: "never", outputFolder: "playwright-report" }],
+    // Machine-readable run summary consumed by scripts/visual-diff-report.mjs
+    // to build the PR comment for BillingCalendar/BillingSheet diffs.
+    ["json", { outputFile: "playwright-report/results.json" }],
+  ],
   outputDir: "test-results",
   timeout: 30_000,
   expect: {
