@@ -509,3 +509,60 @@ Updating a baseline after an **intentional** UI change:
 
 Never lower `threshold`/`maxDiffPixelRatio` or add `--update-snapshots` to CI to
 make a red baseline pass.
+
+## REV036 — CI visual regression, encoding edge cases & tab-stop guard
+
+### CI pipeline (`.github/workflows/ci.yml`)
+
+Three jobs run on every push and pull request:
+
+| job | what it enforces |
+| --- | --- |
+| `e2e` | lint, `tsc --noEmit`, `vitest run`, the full Playwright suite |
+| `billing-a11y` | `bun run e2e:a11y --retries=0` — BillingCalendar + DueDatePicker a11y/focus specs; **any focus-trap or Escape-scope regression fails the PR** |
+| `billing-visual` | `bun run e2e:visual:billing` — BillingCalendar/BillingSheet baselines at the documented thresholds |
+
+`billing-a11y` runs with `--retries=0` on purpose: a focus regression that only
+reproduces sometimes is still a regression, and a retry would hide it. Covered
+specs: `billing-a11y`, `billing-calendar-a11y`, `billing-calendar-focus`,
+`billing-calendar-tabstops`, `due-date-picker-a11y`.
+
+### Approving an intentional UI change (visual baselines)
+
+1. `billing-visual` fails and uploads `billing-visual-artifacts-<attempt>`.
+2. Download it and inspect every `*-diff.png` / `*-actual.png`. A diff touching
+   a control you did not change means the change is **not** intentional — fix
+   the code, not the baseline.
+3. Locally run `bun run e2e:update:billing`.
+4. Commit the regenerated PNGs from `e2e/__screenshots__/` in the **same PR** as
+   the UI change and list the moved baselines in the PR description.
+
+Never loosen `threshold` / `maxDiffPixelRatio`, and never add
+`--update-snapshots` to a CI command.
+
+Baselines produced by `e2e/billing-visual.spec.ts` (thresholds restated
+per-assertion so a config change cannot silently loosen them):
+`billing-sheet-default.png`, `billing-sheet-amount-error.png`,
+`billing-calendar-idle.png`, `billing-calendar-focused-day.png`.
+
+### Deep-link encoding edge cases (`src/tests/whatsapp-deep-link-encoding.test.ts`)
+
+- emoji are emitted as UTF-8 percent triplets (`💡` → `%F0%9F%92%A1`) and decode
+  back verbatim;
+- accented, Cyrillic, CJK and combining-mark text survives the round trip;
+- spaces are `%20` (never `+`), newlines are `%0A`, CRLF/tabs are normalised,
+  blank-line runs collapse, zero-width/bidi characters are stripped;
+- already percent-encoded input is double-encoded (`%2050` → `%252050`) so it
+  decodes back to the literal the user typed;
+- an embedded `?text=…&utm=1#frag` never becomes URL structure — the built link
+  always has exactly one `text` param and no hash.
+
+### Tab-stop guard (`e2e/billing-calendar-tabstops.spec.ts`)
+
+After every `ArrowLeft`/`ArrowRight`/`PageUp`/`PageDown` press — including the
+presses that change the month — the spec asserts that the grid has exactly one
+`tabindex="0"` day, that this day is `document.activeElement`, and that the
+focused element's test id matches `^billing-day-`. Focus can therefore never
+land on `<body>`, on a month-navigation button, or on a stale day. Coverage:
+40 forward/backward arrow steps, 12 forward/backward month jumps, and a mixed
+arrow/page sequence.
