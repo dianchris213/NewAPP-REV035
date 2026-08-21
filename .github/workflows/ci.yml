@@ -1,0 +1,78 @@
+name: CI
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  e2e:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      # Cache Bun's global module cache AND the resolved node_modules tree,
+      # keyed by the lockfile so a dependency change invalidates both. Restore
+      # keys only ever reuse a previous tree as a warm start; the frozen install
+      # below still reconciles it, so results stay byte-for-byte consistent.
+      - name: Cache Bun + node_modules
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.bun/install/cache
+            node_modules
+          key: ${{ runner.os }}-bun-${{ hashFiles('bun.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-bun-
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      # Playwright's browser download is the slowest step; cache it per version.
+      - name: Cache Playwright browsers
+        id: playwright-cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ hashFiles('bun.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-playwright-
+
+      - name: Lint and typecheck
+        run: |
+          bun run lint
+          bunx tsc --noEmit
+
+      - name: Unit tests
+        run: bunx vitest run
+
+      - name: Install Playwright browsers
+        run: bunx playwright install --with-deps chromium
+
+      # Step-level timeout stays below the job timeout so a hung pointer
+      # interaction fails this step instead of killing the job, guaranteeing the
+      # upload step below still runs and publishes the trace + screenshot.
+      - name: E2E tests
+        timeout-minutes: 12
+        run: bunx playwright test --trace=retain-on-failure
+
+      # Traces, screenshots and videos are produced on failure (see
+      # playwright.config.ts) and uploaded unconditionally so evidence for a
+      # failing run is always available in the workflow summary.
+      - name: Upload Playwright artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-artifacts-${{ github.run_attempt }}
+          path: |
+            test-results/
+            playwright-report/
+            e2e/__screenshots__/
+          if-no-files-found: ignore
+          retention-days: 14

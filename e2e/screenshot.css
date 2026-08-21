@@ -1,0 +1,37 @@
+/*
+ * Injected into every toHaveScreenshot() call (see playwright.config.ts).
+ *
+ * Goal: absorb harmless font/rendering differences between machines (CI vs
+ * local, different fontconfig or GPU) WITHOUT weakening the accuracy of the
+ * active-selection highlight, which is what these baselines actually assert.
+ *
+ * How: pin the font stack and text rendering so glyph rasterisation is
+ * deterministic, and freeze animations/transitions/carets so no frame is
+ * captured mid-flight. Colors, borders, rings and background fills — the
+ * signals that encode the active highlight — are left untouched.
+ */
+
+*,
+*::before,
+*::after {
+  animation: none !important;
+  transition: none !important;
+  caret-color: transparent !important;
+  /* Deterministic glyph rasterisation across machines. */
+  -webkit-font-smoothing: antialiased !important;
+  text-rendering: geometricPrecision !important;
+  font-kerning: none !important;
+  font-variant-ligatures: none !important;
+  font-synthesis: none !important;
+}
+
+html,
+body {
+  /* One font stack everywhere: the app's webfont may not be installed on CI. */
+  font-family: Arial, Helvetica, sans-serif !important;
+}
+
+/* Scrollbars are OS-dependent and outside the visual contract. */
+::-webkit-scrollbar {
+  display: none !important;
+}
