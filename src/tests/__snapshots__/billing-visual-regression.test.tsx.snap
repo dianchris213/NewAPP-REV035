@@ -1,0 +1,215 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Visual regression — BillingCalendar focus/hover > keeps the month navigation focus ring stable > calendar-next-focus 1`] = `
+{
+  "ariaChecked": null,
+  "ariaSelected": null,
+  "className": "flex h-9 w-9 items-center justify-center rounded-xl bg-surface-container text-on-surface-variant focus-visible:ring-2 focus-visible:ring-primary/60",
+  "dataDay": null,
+  "focused": true,
+  "hovered": false,
+  "role": null,
+  "tabIndex": 0,
+  "tag": "button",
+  "testId": "billing-calendar-next",
+}
+`;
+
+exports[`Visual regression — BillingCalendar focus/hover > keeps the month navigation focus ring stable > calendar-prev-focus-hover 1`] = `
+{
+  "ariaChecked": null,
+  "ariaSelected": null,
+  "className": "flex h-9 w-9 items-center justify-center rounded-xl bg-surface-container text-on-surface-variant focus-visible:ring-2 focus-visible:ring-primary/60",
+  "dataDay": null,
+  "focused": true,
+  "hovered": true,
+  "role": null,
+  "tabIndex": 0,
+  "tag": "button",
+  "testId": "billing-calendar-prev",
+}
+`;
+
+exports[`Visual regression — BillingCalendar focus/hover > keeps the selected-day highlight, roving tabindex and focus ring stable > calendar-day-focus 1`] = `
+{
+  "ariaChecked": null,
+  "ariaSelected": "false",
+  "className": "flex h-11 w-full flex-col items-center justify-center gap-0.5 rounded-xl text-[12px] transition-colors focus-visible:ring-2 focus-visible:ring-primary/60 text-on-surface",
+  "dataDay": null,
+  "focused": true,
+  "hovered": true,
+  "role": null,
+  "tabIndex": -1,
+  "tag": "button",
+  "testId": "billing-day-2026-03-10",
+}
+`;
+
+exports[`Visual regression — BillingCalendar focus/hover > keeps the selected-day highlight, roving tabindex and focus ring stable > calendar-day-hover 1`] = `
+{
+  "ariaChecked": null,
+  "ariaSelected": "false",
+  "className": "flex h-11 w-full flex-col items-center justify-center gap-0.5 rounded-xl text-[12px] transition-colors focus-visible:ring-2 focus-visible:ring-primary/60 text-on-surface",
+  "dataDay": null,
+  "focused": false,
+  "hovered": true,
+  "role": null,
+  "tabIndex": -1,
+  "tag": "button",
+  "testId": "billing-day-2026-03-10",
+}
+`;
+
+exports[`Visual regression — BillingCalendar focus/hover > keeps the selected-day highlight, roving tabindex and focus ring stable > calendar-day-idle 1`] = `
+{
+  "ariaChecked": null,
+  "ariaSelected": "false",
+  "className": "flex h-11 w-full flex-col items-center justify-center gap-0.5 rounded-xl text-[12px] transition-colors focus-visible:ring-2 focus-visible:ring-primary/60 text-on-surface",
+  "dataDay": null,
+  "focused": false,
+  "hovered": false,
+  "role": null,
+  "tabIndex": -1,
+  "tag": "button",
+  "testId": "billing-day-2026-03-10",
+}
+`;
+
+exports[`Visual regression — BillingCalendar focus/hover > keeps the selected-day highlight, roving tabindex and focus ring stable > calendar-day-selected 1`] = `
+{
+  "ariaChecked": null,
+  "ariaSelected": "true",
+  "className": "flex h-11 w-full flex-col items-center justify-center gap-0.5 rounded-xl text-[12px] transition-colors focus-visible:ring-2 focus-visible:ring-primary/60 bg-primary text-on-primary",
+  "dataDay": "selected",
+  "focused": false,
+  "hovered": false,
+  "role": null,
+  "tabIndex": 0,
+  "tag": "button",
+  "testId": "billing-day-2026-03-08",
+}
+`;
+
+exports[`Visual regression — BillingSheet focus/hover > keeps the Nominal field layout stable across value, focus and error states > amount-error 1`] = `
+{
+  "ariaChecked": null,
+  "ariaSelected": null,
+  "className": "h-12 w-full rounded-2xl border border-outline-variant/30 bg-surface-container px-4 text-[14px] text-on-surface outline-none focus-visible:ring-2 focus-visible:ring-primary/60 text-right font-bold tabular-nums border-error",
+  "dataDay": null,
+  "focused": false,
+  "hovered": false,
+  "role": null,
+  "tabIndex": 0,
+  "tag": "input",
+  "testId": "billing-amount",
+}
+`;
+
+exports[`Visual regression — BillingSheet focus/hover > keeps the Nominal field layout stable across value, focus and error states > amount-focus-empty 1`] = `
+{
+  "ariaChecked": null,
+  "ariaSelected": null,
+  "className": "h-12 w-full rounded-2xl border border-outline-variant/30 bg-surface-container px-4 text-[14px] text-on-surface outline-none focus-visible:ring-2 focus-visible:ring-primary/60 text-right font-bold tabular-nums ",
+  "dataDay": null,
+  "focused": true,
+  "hovered": false,
+  "role": null,
+  "tabIndex": 0,
+  "tag": "input",
+  "testId": "billing-amount",
+}
+`;
+
+exports[`Visual regression — BillingSheet focus/hover > keeps the Nominal field layout stable across value, focus and error states > amount-focus-filled 1`] = `
+{
+  "ariaChecked": null,
+  "ariaSelected": null,
+  "className": "h-12 w-full rounded-2xl border border-outline-variant/30 bg-surface-container px-4 text-[14px] text-on-surface outline-none focus-visible:ring-2 focus-visible:ring-primary/60 text-right font-bold tabular-nums ",
+  "dataDay": null,
+  "focused": true,
+  "hovered": false,
+  "role": null,
+  "tabIndex": 0,
+  "tag": "input",
+  "testId": "billing-amount",
+}
+`;
+
+exports[`Visual regression — BillingSheet focus/hover > keeps the Nominal field layout stable across value, focus and error states > amount-total 1`] = `"Rp 1.250.000"`;
+
+exports[`Visual regression — BillingSheet focus/hover > keeps the icon picker active/idle states and focus ring stable > icon-active 1`] = `
+{
+  "ariaChecked": "true",
+  "ariaSelected": null,
+  "className": "flex h-10 w-10 items-center justify-center rounded-xl border transition-colors focus-visible:ring-2 focus-visible:ring-primary/60 border-primary bg-primary-container/50 text-primary",
+  "dataDay": null,
+  "focused": false,
+  "hovered": false,
+  "role": "radio",
+  "tabIndex": 0,
+  "tag": "button",
+  "testId": "billing-icon-receipt_long",
+}
+`;
+
+exports[`Visual regression — BillingSheet focus/hover > keeps the icon picker active/idle states and focus ring stable > icon-hover 1`] = `
+{
+  "ariaChecked": "false",
+  "ariaSelected": null,
+  "className": "flex h-10 w-10 items-center justify-center rounded-xl border transition-colors focus-visible:ring-2 focus-visible:ring-primary/60 border-outline-variant/30 bg-surface-container text-on-surface-variant",
+  "dataDay": null,
+  "focused": false,
+  "hovered": true,
+  "role": "radio",
+  "tabIndex": -1,
+  "tag": "button",
+  "testId": "billing-icon-wifi",
+}
+`;
+
+exports[`Visual regression — BillingSheet focus/hover > keeps the icon picker active/idle states and focus ring stable > icon-idle 1`] = `
+{
+  "ariaChecked": "false",
+  "ariaSelected": null,
+  "className": "flex h-10 w-10 items-center justify-center rounded-xl border transition-colors focus-visible:ring-2 focus-visible:ring-primary/60 border-outline-variant/30 bg-surface-container text-on-surface-variant",
+  "dataDay": null,
+  "focused": false,
+  "hovered": false,
+  "role": "radio",
+  "tabIndex": -1,
+  "tag": "button",
+  "testId": "billing-icon-wifi",
+}
+`;
+
+exports[`Visual regression — BillingSheet focus/hover > keeps the icon picker active/idle states and focus ring stable > icon-toggled-active 1`] = `
+{
+  "ariaChecked": "true",
+  "ariaSelected": null,
+  "className": "flex h-10 w-10 items-center justify-center rounded-xl border transition-colors focus-visible:ring-2 focus-visible:ring-primary/60 border-primary bg-primary-container/50 text-primary",
+  "dataDay": null,
+  "focused": true,
+  "hovered": true,
+  "role": "radio",
+  "tabIndex": 0,
+  "tag": "button",
+  "testId": "billing-icon-wifi",
+}
+`;
+
+exports[`Visual regression — BillingSheet focus/hover > keeps the submit button and summary layout stable on hover/focus > submit-focus-hover 1`] = `
+{
+  "ariaChecked": null,
+  "ariaSelected": null,
+  "className": "gradient-primary h-12 flex-1 rounded-full text-[13px] font-bold text-on-primary-container transition-transform active:scale-95",
+  "dataDay": null,
+  "focused": true,
+  "hovered": true,
+  "role": null,
+  "tabIndex": 0,
+  "tag": "button",
+  "testId": "billing-submit",
+}
+`;
+
+exports[`Visual regression — BillingSheet focus/hover > keeps the submit button and summary layout stable on hover/focus > summary-layout 1`] = `"mt-4 grid grid-cols-3 gap-2 rounded-2xl bg-surface-container p-3"`;

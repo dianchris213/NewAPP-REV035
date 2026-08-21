@@ -1,0 +1,163 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Visual regression — Kategori Transaksi list > keeps the active Jenis selection highlight stable > category-list-income-layout 1`] = `
+{
+  "activeType": {
+    "options": [
+      {
+        "label": "Semua Jenis (5)",
+        "selected": false,
+        "value": "all",
+      },
+      {
+        "label": "Pemasukan (2)",
+        "selected": true,
+        "value": "income",
+      },
+      {
+        "label": "Pengeluaran (3)",
+        "selected": false,
+        "value": "expense",
+      },
+    ],
+    "selectedLabel": "Pemasukan (2)",
+    "value": "income",
+  },
+  "collapsedNotice": null,
+  "list": {
+    "ariaLabel": "Kategori Transaksi",
+    "className": "mt-3 list-none rounded-2xl bg-surface-container px-4 py-1",
+  },
+  "rows": [
+    {
+      "className": "flex flex-col gap-2 border-b border-outline-variant/20 py-3 last:border-0",
+      "name": "BonusSemua akun · 0",
+      "testId": "category-item-c1",
+    },
+    {
+      "className": "flex flex-col gap-2 border-b border-outline-variant/20 py-3 last:border-0",
+      "name": "GajiSemua akun · 0",
+      "testId": "category-item-c2",
+    },
+  ],
+  "toggle": null,
+}
+`;
+
+exports[`Visual regression — Kategori Transaksi list > keeps the collapsed preview layout and its highlighted toggle stable > category-list-collapsed-layout 1`] = `
+{
+  "activeType": {
+    "options": [
+      {
+        "label": "Semua Jenis (5)",
+        "selected": true,
+        "value": "all",
+      },
+      {
+        "label": "Pemasukan (2)",
+        "selected": false,
+        "value": "income",
+      },
+      {
+        "label": "Pengeluaran (3)",
+        "selected": false,
+        "value": "expense",
+      },
+    ],
+    "selectedLabel": "Semua Jenis (5)",
+    "value": "all",
+  },
+  "collapsedNotice": "3/5",
+  "list": {
+    "ariaLabel": "Kategori Transaksi",
+    "className": "mt-3 list-none rounded-2xl bg-surface-container px-4 py-1",
+  },
+  "rows": [
+    {
+      "className": "flex flex-col gap-2 border-b border-outline-variant/20 py-3 last:border-0",
+      "name": "BonusSemua akun · 0",
+      "testId": "category-item-c1",
+    },
+    {
+      "className": "flex flex-col gap-2 border-b border-outline-variant/20 py-3 last:border-0",
+      "name": "GajiSemua akun · 0",
+      "testId": "category-item-c2",
+    },
+    {
+      "className": "flex flex-col gap-2 border-b border-outline-variant/20 py-3 last:border-0",
+      "name": "InternetSemua akun · 0",
+      "testId": "category-item-c3",
+    },
+  ],
+  "toggle": {
+    "className": "mt-2 h-11 w-full rounded-2xl border text-[12px] font-semibold focus-visible:ring-2 focus-visible:ring-primary/60 border-primary/60 bg-primary-container/30 text-primary",
+    "expanded": "false",
+    "state": "collapsed",
+    "text": "Tampilkan semua (5)",
+  },
+}
+`;
+
+exports[`Visual regression — Kategori Transaksi list > keeps the fully populated (expanded) list layout stable > category-list-expanded-layout 1`] = `
+{
+  "activeType": {
+    "options": [
+      {
+        "label": "Semua Jenis (5)",
+        "selected": true,
+        "value": "all",
+      },
+      {
+        "label": "Pemasukan (2)",
+        "selected": false,
+        "value": "income",
+      },
+      {
+        "label": "Pengeluaran (3)",
+        "selected": false,
+        "value": "expense",
+      },
+    ],
+    "selectedLabel": "Semua Jenis (5)",
+    "value": "all",
+  },
+  "collapsedNotice": null,
+  "list": {
+    "ariaLabel": "Kategori Transaksi",
+    "className": "mt-3 list-none rounded-2xl bg-surface-container px-4 py-1",
+  },
+  "rows": [
+    {
+      "className": "flex flex-col gap-2 border-b border-outline-variant/20 py-3 last:border-0",
+      "name": "BonusSemua akun · 0",
+      "testId": "category-item-c1",
+    },
+    {
+      "className": "flex flex-col gap-2 border-b border-outline-variant/20 py-3 last:border-0",
+      "name": "GajiSemua akun · 0",
+      "testId": "category-item-c2",
+    },
+    {
+      "className": "flex flex-col gap-2 border-b border-outline-variant/20 py-3 last:border-0",
+      "name": "InternetSemua akun · 0",
+      "testId": "category-item-c3",
+    },
+    {
+      "className": "flex flex-col gap-2 border-b border-outline-variant/20 py-3 last:border-0",
+      "name": "KopiSemua akun · 0",
+      "testId": "category-item-c4",
+    },
+    {
+      "className": "flex flex-col gap-2 border-b border-outline-variant/20 py-3 last:border-0",
+      "name": "MakanSemua akun · 0",
+      "testId": "category-item-c5",
+    },
+  ],
+  "toggle": {
+    "className": "mt-2 h-11 w-full rounded-2xl border text-[12px] font-semibold focus-visible:ring-2 focus-visible:ring-primary/60 border-outline-variant/30 text-on-surface-variant",
+    "expanded": "true",
+    "state": "expanded",
+    "text": "Sembunyikan",
+  },
+}
+`;

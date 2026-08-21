@@ -4,6 +4,197 @@
 
 @custom-variant dark (&:is(.dark *));
 
+@theme {
+  --color-surface: #121016;
+  --color-surface-dim: #0e0c12;
+  --color-surface-bright: #3b3742;
+  --color-surface-container-lowest: #0b0910;
+  --color-surface-container-low: #17141d;
+  --color-surface-container: #1b1823;
+  --color-surface-container-high: #221e2c;
+  --color-surface-container-highest: #2b2636;
+  --color-surface-variant: #2b2636;
+  --color-on-surface: #e5e2e1;
+  --color-on-surface-variant: #cbc3d7;
+  --color-outline: #958ea0;
+  --color-outline-variant: #494454;
+  --color-primary: #d0bcff;
+  --color-on-primary: #3c0091;
+  --color-primary-container: #6d28d9;
+  --color-on-primary-container: #ede9fe;
+  --color-secondary: #cebdff;
+  --color-on-secondary: #381385;
+  --color-secondary-container: #4f319c;
+  --color-tertiary: #ffb869;
+  --color-error: #ffb4ab;
+  --color-error-container: #93000a;
+  --color-background: #0f0d14;
+  --color-on-background: #e7e0ed;
+  --color-success: #4ade80;
+
+  --font-sans: "Hanken Grotesk", ui-sans-serif, system-ui, sans-serif;
+
+  --spacing-margin-main: 20px;
+  --spacing-gutter-grid: 12px;
+  --spacing-stack-sm: 8px;
+  --spacing-stack-md: 16px;
+  --spacing-stack-lg: 24px;
+  --spacing-safe-area-top: 16px;
+  --spacing-safe-area-bottom: 20px;
+
+  --text-display: 34px;
+  --text-display--line-height: 40px;
+  --text-display--letter-spacing: -0.02em;
+  --text-display--font-weight: 700;
+  --text-title: 20px;
+  --text-title--line-height: 26px;
+  --text-title--letter-spacing: -0.01em;
+  --text-title--font-weight: 700;
+  --text-section: 15px;
+  --text-section--line-height: 20px;
+  --text-section--font-weight: 600;
+  --text-body: 14px;
+  --text-body--line-height: 20px;
+  --text-meta: 12px;
+  --text-meta--line-height: 16px;
+  --text-label: 11px;
+  --text-label--line-height: 14px;
+  --text-label--letter-spacing: 0.08em;
+  --text-label--font-weight: 600;
+
+  --shadow-elevated: 0 18px 40px -20px rgba(0, 0, 0, 0.85);
+  --shadow-glow: 0 12px 32px -8px rgba(109, 40, 217, 0.55);
+}
+
+@utility glass-panel {
+  background: var(--glass-panel-bg);
+  backdrop-filter: blur(18px) saturate(130%);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow-elevated);
+}
+
+@utility glass-card {
+  background: var(--glass-card-bg);
+  backdrop-filter: blur(20px) saturate(140%);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow-elevated);
+}
+
+@utility surface-panel {
+  background: var(--color-surface-container-low);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+@utility gradient-hero {
+  background: var(--gradient-hero-bg);
+  border: 1px solid var(--gradient-hero-border);
+  box-shadow: var(--shadow-glow);
+}
+
+/* Theme surfaces: dark is the default; `.theme-light` is applied on <html>
+   when the Pengaturan theme switch is turned off. */
+:root {
+  --glass-panel-bg:
+    linear-gradient(150deg, rgba(139, 92, 246, 0.09) 0%, rgba(20, 17, 27, 0.92) 55%),
+    rgba(20, 17, 27, 0.9);
+  --glass-card-bg:
+    linear-gradient(150deg, rgba(139, 92, 246, 0.12) 0%, rgba(20, 17, 27, 0.9) 55%),
+    rgba(20, 17, 27, 0.88);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --gradient-hero-bg:
+    radial-gradient(120% 140% at 85% -10%, rgba(139, 92, 246, 0.45) 0%, transparent 60%),
+    linear-gradient(155deg, #2a1a52 0%, #170f24 55%, #120f18 100%);
+  --gradient-hero-border: rgba(208, 188, 255, 0.14);
+}
+
+.theme-light {
+  --color-surface: #ffffff;
+  --color-surface-dim: #f2eef7;
+  --color-surface-bright: #ffffff;
+  --color-surface-container-lowest: #ffffff;
+  --color-surface-container-low: #f7f4fb;
+  --color-surface-container: #f2eef8;
+  --color-surface-container-high: #ece6f5;
+  --color-surface-container-highest: #e5ddf1;
+  --color-surface-variant: #ece6f5;
+  --color-on-surface: #1c1a20;
+  --color-on-surface-variant: #4c4658;
+  --color-outline: #7a7288;
+  --color-outline-variant: #cfc7dd;
+  --color-primary: #6d28d9;
+  --color-on-primary: #ffffff;
+  --color-primary-container: #ddd0ff;
+  --color-on-primary-container: #ffffff;
+  --color-secondary: #5b3fc0;
+  --color-tertiary: #b45309;
+  --color-error: #b3261e;
+  --color-error-container: #f9dedc;
+  --color-background: #faf8fd;
+  --color-on-background: #1c1a20;
+  --color-success: #15803d;
+
+  --shadow-elevated: 0 18px 40px -24px rgba(60, 40, 110, 0.35);
+  --shadow-glow: 0 12px 32px -12px rgba(109, 40, 217, 0.35);
+
+  --glass-panel-bg:
+    linear-gradient(150deg, rgba(139, 92, 246, 0.08) 0%, rgba(255, 255, 255, 0.95) 55%),
+    rgba(255, 255, 255, 0.92);
+  --glass-card-bg:
+    linear-gradient(150deg, rgba(139, 92, 246, 0.1) 0%, rgba(255, 255, 255, 0.95) 55%),
+    rgba(255, 255, 255, 0.9);
+  --glass-border: rgba(60, 40, 110, 0.12);
+  --gradient-hero-bg:
+    radial-gradient(120% 140% at 85% -10%, rgba(167, 139, 250, 0.45) 0%, transparent 60%),
+    linear-gradient(155deg, #ede9fe 0%, #f6f2ff 55%, #ffffff 100%);
+  --gradient-hero-border: rgba(109, 40, 217, 0.18);
+}
+
+@utility gradient-primary {
+  background: linear-gradient(135deg, #a78bfa 0%, #7c3aed 55%, #6d28d9 100%);
+}
+
+@utility no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  &::-webkit-scrollbar {
+    display: none;
+    width: 0;
+    height: 0;
+  }
+}
+
+/* Touch-friendly horizontal swipe strip (mobile + desktop drag) */
+@utility swipe-x {
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  /* pan-x + pan-y: horizontal swipe works, vertical page scroll still works,
+     and taps/clicks on children are never swallowed by a gesture. */
+  touch-action: pan-x pan-y;
+  overscroll-behavior-x: contain;
+  overscroll-behavior-y: auto;
+  scroll-snap-type: x proximity;
+  scroll-padding-inline: 4px;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  scrollbar-gutter: stable;
+  &::-webkit-scrollbar {
+    display: none;
+    width: 0;
+    height: 0;
+  }
+  & > * {
+    scroll-snap-align: start;
+    /* remove the 300ms tap delay so nested buttons feel instant */
+    touch-action: manipulation;
+  }
+  & button,
+  & a,
+  & [role="button"] {
+    touch-action: manipulation;
+  }
+}
+
 /*
  * Design system definition.
  *
@@ -137,8 +328,40 @@
     border-color: var(--color-border);
   }
 
+  /* Hide global scrollbars (native app look) while keeping scroll working */
+  html,
+  body,
+  main {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  html::-webkit-scrollbar,
+  body::-webkit-scrollbar,
+  main::-webkit-scrollbar {
+    display: none;
+    width: 0;
+    height: 0;
+  }
+
   body {
     background-color: var(--color-background);
-    color: var(--color-foreground);
+    color: var(--color-on-background);
+    font-family: var(--font-sans);
+  }
+
+  .material-symbols-outlined {
+    font-family: "Material Symbols Outlined";
+    font-weight: normal;
+    font-style: normal;
+    line-height: 1;
+    letter-spacing: normal;
+    text-transform: none;
+    display: inline-block;
+    white-space: nowrap;
+    word-wrap: normal;
+    direction: ltr;
+    -webkit-font-feature-settings: "liga";
+    -webkit-font-smoothing: antialiased;
   }
 }

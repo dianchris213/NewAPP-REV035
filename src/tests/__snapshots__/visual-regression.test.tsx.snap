@@ -1,0 +1,35 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Visual regression — delete dialog & Undo toast > keeps the Undo snackbar layout, sizing and focus stable > undo-snackbar-layout 1`] = `
+{
+  "children": [
+    {
+      "className": "shrink-0 rounded-full bg-primary-container/40 px-4 py-2 text-[12px] font-bold text-primary focus-visible:ring-2 focus-visible:ring-primary/60",
+      "testId": "undo-action",
+    },
+    {
+      "className": "flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-surface-variant text-on-surface-variant focus-visible:ring-2 focus-visible:ring-primary/60",
+      "testId": "undo-dismiss",
+    },
+  ],
+  "className": "fixed inset-x-0 bottom-4 z-[200] mx-auto w-[min(92vw,26rem)] overflow-hidden rounded-[18px] border border-outline-variant/25 bg-surface-container-high p-4 shadow-2xl",
+  "role": "alertdialog",
+}
+`;
+
+exports[`Visual regression — delete dialog & Undo toast > keeps the delete confirmation dialog layout, sizing and focus stable > delete-dialog-layout 1`] = `
+{
+  "children": [
+    {
+      "className": "h-11 flex-1 rounded-full bg-surface-variant text-[13px] font-semibold text-on-surface-variant focus-visible:ring-2 focus-visible:ring-primary/60",
+      "testId": "fund-source-confirm-cancel",
+    },
+    {
+      "className": "h-11 flex-1 rounded-full border border-error/40 bg-error/15 text-[13px] font-bold text-error focus-visible:ring-2 focus-visible:ring-primary/60 disabled:opacity-60",
+      "testId": "fund-source-confirm-delete",
+    },
+  ],
+  "className": "w-full max-w-sm rounded-[22px] border border-outline-variant/20 bg-surface-container-high p-5 shadow-2xl",
+  "role": "alertdialog",
+}
+`;
