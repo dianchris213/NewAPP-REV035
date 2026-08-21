@@ -54,24 +54,32 @@ test.describe("BillingCalendar — accessibility", () => {
   test("arrow keys move the focused day and keep a single tab stop", async ({ page }) => {
     await openSheet(page);
     const grid = page.getByTestId("billing-calendar");
-    const tabbable = await grid.locator('button[data-testid^="billing-day-"][tabindex="0"]').count();
-    expect(tabbable).toBe(1);
+    await expect(grid.locator('button[data-testid^="billing-day-"][tabindex="0"]')).toHaveCount(1);
 
-    await grid.locator('button[data-day="selected"]').focus();
-    const before = await page.evaluate(
-      () => (document.activeElement as HTMLElement | null)?.dataset["testid"] ?? "",
-    );
-    await page.keyboard.press("ArrowRight");
-    const afterRight = await page.evaluate(
-      () => (document.activeElement as HTMLElement | null)?.dataset["testid"] ?? "",
-    );
+    const activeTestId = () =>
+      page.evaluate(() => (document.activeElement as HTMLElement | null)?.dataset["testid"] ?? "");
+
+    const selectedDay = grid.locator('button[data-day="selected"]');
+    await expect(selectedDay).toBeVisible();
+    await selectedDay.focus();
+    await expect(selectedDay).toBeFocused();
+    const before = await activeTestId();
+    expect(before).not.toBe("");
+
+    // Focus must land on the newly selected day right after the commit; poll on
+    // the DOM state instead of relying on animation-frame timing.
+    const pressAndExpectFocus = async (key: string) => {
+      await page.keyboard.press(key);
+      await expect(grid.locator('button[data-day="selected"]')).toBeFocused();
+      await expect(grid.locator('button[data-testid^="billing-day-"][tabindex="0"]')).toHaveCount(1);
+      return activeTestId();
+    };
+
+    const afterRight = await pressAndExpectFocus("ArrowRight");
     expect(afterRight).not.toBe(before);
-    await page.keyboard.press("ArrowDown");
-    await page.keyboard.press("ArrowUp");
-    await page.keyboard.press("ArrowLeft");
-    const back = await page.evaluate(
-      () => (document.activeElement as HTMLElement | null)?.dataset["testid"] ?? "",
-    );
+    await pressAndExpectFocus("ArrowDown");
+    await pressAndExpectFocus("ArrowUp");
+    const back = await pressAndExpectFocus("ArrowLeft");
     expect(back).toBe(before);
   });
 });
@@ -93,8 +101,17 @@ test.describe("Due-date picker — accessibility", () => {
 
     await page.keyboard.press("ArrowRight");
     await expect(input).toHaveValue("2026-08-22");
+    await expect(page.getByTestId("billing-due-day-2026-08-22")).toBeFocused();
+
     await page.keyboard.press("Escape");
     await expect(popover).toBeHidden();
     await expect(page.getByTestId("billing-due-date-toggle")).toBeFocused();
+    await expect
+      .poll(() =>
+        page.evaluate(
+          () => (document.activeElement as HTMLElement | null)?.dataset["testid"] ?? "",
+        ),
+      )
+      .toBe("billing-due-date-toggle");
   });
 });
