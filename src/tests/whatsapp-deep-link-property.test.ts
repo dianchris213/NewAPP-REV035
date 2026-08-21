@@ -42,8 +42,8 @@ const ENCODED_TEXT = /^(?:[A-Za-z0-9\-._~]|%[0-9A-F]{2})*$/;
 const rawText = () =>
   fc.oneof(
     fc.string({ maxLength: 120 }),
-    fc.fullUnicodeString({ maxLength: 120 }),
-    fc.stringOf(fc.constantFrom(" ", "\t", "\n", "\r\n", "\u00a0", "\u200b"), { maxLength: 40 }),
+    fc.string({ unit: "grapheme", maxLength: 120 }),
+    fc.string({ unit: fc.constantFrom(" ", "\t", "\n", "\r\n", "\u00a0", "\u200b"), maxLength: 40 }),
     fc.constantFrom(
       "%20%0A already encoded",
       "a&b=c#d+e",
@@ -96,7 +96,7 @@ describe("buildWhatsAppLink — properties", () => {
   it("already-encoded input is escaped again, never decoded by WhatsApp", () => {
     fc.assert(
       fc.property(
-        fc.stringOf(fc.constantFrom("%20", "%0A", "%26", "%2F"), { minLength: 1, maxLength: 12 }),
+        fc.string({ unit: fc.constantFrom("%20", "%0A", "%26", "%2F"), minLength: 1, maxLength: 12 }),
         (note) => {
           const link = buildWhatsAppLink(bill({ note }), profile(), TODAY);
           const decoded = new URL(link).searchParams.get("text") ?? "";
@@ -111,7 +111,7 @@ describe("buildWhatsAppLink — properties", () => {
   it("whitespace variants never leak raw spaces, tabs or CR into the URL", () => {
     fc.assert(
       fc.property(
-        fc.stringOf(fc.constantFrom(" ", "\t", "\n", "\r\n", "x"), { maxLength: 60 }),
+        fc.string({ unit: fc.constantFrom(" ", "\t", "\n", "\r\n", "x"), maxLength: 60 }),
         (note) => {
           const link = buildWhatsAppLink(bill({ note }), profile(), TODAY);
           expect(link).not.toMatch(/[\s]/);
@@ -136,7 +136,7 @@ describe("buildWhatsAppLink — properties", () => {
 
   it("random unicode never exceeds the documented text limit", () => {
     fc.assert(
-      fc.property(fc.fullUnicodeString({ maxLength: 6000 }), (note) => {
+      fc.property(fc.string({ unit: "grapheme", maxLength: 6000 }), (note) => {
         const link = buildWhatsAppLink(bill({ note }), profile(), TODAY);
         const decoded = new URL(link).searchParams.get("text") ?? "";
         expect(decoded.length).toBeLessThanOrEqual(WHATSAPP_TEXT_LIMIT);
