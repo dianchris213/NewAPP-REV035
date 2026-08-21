@@ -158,6 +158,7 @@ export function DueDatePicker({
       {open ? (
         <div
           data-testid="billing-due-date-popover"
+          data-escape-scope=""
           className="mt-1 rounded-2xl border border-outline-variant/20 bg-surface-container-high p-3 shadow-xl"
           onKeyDown={(event) => {
             if (event.key !== "Escape") return;

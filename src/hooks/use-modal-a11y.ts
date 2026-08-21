@@ -68,6 +68,11 @@ export function useModalA11y<T extends HTMLElement = HTMLDivElement>(
 
     const onKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
+        // A nested dismissible layer (e.g. the due-date popover) marks itself
+        // with data-escape-scope and consumes Escape first; the dialog must
+        // stay open in that case.
+        const target = e.target instanceof HTMLElement ? e.target : null;
+        if (target?.closest("[data-escape-scope]")) return;
         e.preventDefault();
         e.stopPropagation();
         closeRef.current?.();
