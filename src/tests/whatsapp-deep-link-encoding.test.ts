@@ -32,13 +32,17 @@ const base: Bill = {
   createdAt: "2026-03-01T00:00:00.000Z",
 };
 
-/** Build a link and return the decoded `text` param, failing on any rejection. */
+/**
+ * Build a link and return the `text` param as the receiving app sees it.
+ * `validateWhatsAppLink` reads it through `URLSearchParams`, which already
+ * percent-decodes, so no extra `decodeURIComponent` is applied here.
+ */
 function decodedText(patch: Partial<Bill>): string {
   const link = buildWhatsAppLink({ ...base, ...patch }, defaultBillingProfile, TODAY);
   const result = validateWhatsAppLink(link);
   expect(result.ok, `link rejected: ${JSON.stringify(result)}`).toBe(true);
   if (!result.ok) throw new Error("unreachable");
-  return decodeURIComponent(result.text);
+  return result.text;
 }
 
 describe("deep-link encoding — emojis and non-ASCII", () => {
