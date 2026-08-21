@@ -20,7 +20,11 @@ const SHOT = {
 
 test.use({ seed: EMPTY_STATE });
 
+/** Frozen "today" so month labels and due-date dots are byte-stable forever. */
+const FIXED_NOW = new Date("2026-03-08T03:00:00.000Z");
+
 async function openBillingSheet(page: Page) {
+  await page.clock.setFixedTime(FIXED_NOW);
   await page.goto("/settings", { waitUntil: "domcontentloaded" });
   const sheet = page.getByTestId("billing-sheet");
   await openWhenHydrated(
