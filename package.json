@@ -16,6 +16,7 @@
     "smoke": "node scripts/smoke.mjs",
     "e2e": "playwright test",
     "e2e:update": "playwright test --update-snapshots",
+    "e2e:update:billing": "playwright test e2e/billing-a11y.spec.ts e2e/billing-calendar-a11y.spec.ts e2e/billing-calendar-focus.spec.ts e2e/due-date-picker-a11y.spec.ts --update-snapshots",
     "e2e:update:visual": "playwright test e2e/category-visual-states.spec.ts e2e/category-empty-state.spec.ts e2e/category-empty-filter.spec.ts --update-snapshots",
     "test:update": "vitest run -u",
     "e2e:report": "playwright show-report"

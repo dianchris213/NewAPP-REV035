@@ -421,3 +421,91 @@ Note: the four new visual baselines are generated on the first `bun run e2e:upda
   keeps the parent sheet open.
 - `e2e/billing-calendar-a11y.spec.ts` asserts with `expect(locator).toBeFocused()`
   and `expect.poll(document.activeElement)` instead of timing assumptions.
+
+## REV035 — Focus helpers, month-transition e2e, deep-link builder tests & baseline policy
+
+### Shared e2e focus helper (`e2e/focus-helpers.ts`)
+
+Every focus-sensitive spec waits on committed DOM state, never on
+`requestAnimationFrame` or `waitForTimeout`:
+
+| helper | guarantees before returning |
+| --- | --- |
+| `activeTestId(page)` | reads `document.activeElement`'s `data-testid` (`""` on `<body>`) |
+| `expectActiveTestId(page, id)` | polls until focus really is on that element |
+| `expectFocusWithin(locator)` | polls until focus is inside the container |
+| `openPopover(page, open, popover)` | popover visible **and** owns focus |
+| `closePopover(page, close, popover, restoreTo)` | popover hidden **and** focus restored to the trigger |
+| `pressAndExpectGridFocus(...)` | key pressed, new day focused, still exactly one tab stop |
+
+Use these instead of ad-hoc `expect(...).toBeFocused()` chains so new specs
+inherit the same anti-flake contract.
+
+### Month-transition focus coverage
+
+`e2e/billing-calendar-focus.spec.ts` walks BillingCalendar across month
+boundaries and asserts focus restoration after **every** change:
+
+- `PageDown`/`PageUp` — month label changes, focused day survives the remount.
+- `End` → `ArrowRight` (roll forward) and `Home` → `ArrowLeft` (roll backward),
+  each verified to return to the exact original day when reversed.
+- `ArrowDown`/`ArrowUp` weeks spilling into the neighbouring month.
+
+### DueDatePicker focus trap
+
+The popover is a `role="dialog" aria-modal="true"` region with a real focus
+trap: `Tab`/`Shift+Tab` cycle only through its own controls (prev month, next
+month, the roving active day), and `Escape` is scoped through
+`data-escape-scope` so it dismisses the popover and returns focus to
+`billing-due-date-toggle` while the parent BillingSheet stays open. A second
+`Escape` — now outside the scope — closes the sheet.
+`e2e/due-date-picker-a11y.spec.ts` asserts the cycle, the scoping and runs axe
+against the open popover.
+
+### WhatsApp deep-link builder unit tests
+
+`src/tests/whatsapp-deep-link-builder.test.ts` pins the builder as a URL:
+
+- exact percent-encoding for ` `, `&`, `#`, `+`, `=`, `?`, `/`, `%`;
+- `buildWhatsAppLink` additionally encodes `'`, `!`, `(`, `)`, `*`, which
+  `encodeURIComponent` leaves literal — otherwise a bill name with an
+  apostrophe would fail the strict format gate;
+- no whitespace or `" ' < > \` \\` ever appears in the emitted link;
+- rejection reasons (`malformed`, `protocol`, `host`, `phone`, `text`,
+  `length`) for malformed URLs, wrong schemes, look-alike hosts and non-string
+  input;
+- hostile field content (bidi overrides, NUL, embedded URLs, 8k notes) still
+  produces a link that passes `validateWhatsAppLink`.
+
+### Visual regression baselines — enforced thresholds
+
+Enforced globally in `playwright.config.ts > expect.toHaveScreenshot`:
+
+| setting | value | why |
+| --- | --- | --- |
+| `threshold` | `0.1` | per-pixel YIQ distance; a recoloured highlight/ring fails |
+| `maxDiffPixelRatio` | `0.005` | absorbs anti-aliased edges only (0.5% of pixels) |
+| `animations` | `disabled` | no mid-transition frames |
+| `caret` | `hide` | text carets never blink into a shot |
+| `scale` | `css` | DPR-independent output |
+| `stylePath` | `e2e/screenshot.css` | pinned font stack, no ligature/kerning drift |
+
+Required BillingCalendar / BillingSheet baselines: sheet default state, sheet
+branding panel, calendar grid empty, calendar grid populated, selected-day
+highlight, keyboard focus ring on a day button, open due-date popover with its
+active day. All must be seeded from the `EMPTY_STATE`/`FILLED_STATE` fixtures
+with a fixed `today` so labels and dot markers are deterministic.
+
+Updating a baseline after an **intentional** UI change:
+
+1. Land the UI change and confirm the diff is intended.
+2. `bun run e2e:update:billing` (only the billing baselines) or
+   `bun run e2e:update` (all).
+3. Open the `visual-regression-<PR number>` artifact and review each `-diff.png`
+   — a diff that touches controls you did not change means the change is not
+   intentional; fix the code, not the baseline.
+4. Commit the regenerated `-actual`→baseline PNGs in the same PR as the UI
+   change, and note in the PR description which baselines moved and why.
+
+Never lower `threshold`/`maxDiffPixelRatio` or add `--update-snapshots` to CI to
+make a red baseline pass.
