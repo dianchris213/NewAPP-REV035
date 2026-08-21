@@ -157,15 +157,33 @@ export function DueDatePicker({
 
       {open ? (
         <div
+          ref={popoverRef}
+          role="dialog"
+          aria-modal="true"
+          aria-label="Pilih tanggal jatuh tempo"
           data-testid="billing-due-date-popover"
           data-escape-scope=""
           className="mt-1 rounded-2xl border border-outline-variant/20 bg-surface-container-high p-3 shadow-xl"
           onKeyDown={(event) => {
+            if (event.key === "Tab") {
+              // Focus trap: Tab cycles through the popover's own controls only.
+              const items = focusables();
+              if (items.length === 0) return;
+              const current = document.activeElement as HTMLElement | null;
+              const index = current ? items.indexOf(current) : -1;
+              const next = event.shiftKey
+                ? items[(index <= 0 ? items.length : index) - 1]
+                : items[(index + 1) % items.length];
+              event.preventDefault();
+              next?.focus();
+              return;
+            }
             if (event.key !== "Escape") return;
             event.preventDefault();
             event.stopPropagation();
             close();
           }}
+
         >
           <div className="mb-2 grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2">
             <button
