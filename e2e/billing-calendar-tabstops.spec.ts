@@ -51,11 +51,12 @@ test.describe("BillingCalendar — focus never leaves the intended tab stop", ()
     const calendar = await openCalendar(page);
     const label = page.getByTestId("billing-calendar-label");
     const months = new Set<string>();
-    const seen: string[] = [];
+    const startDay = await activeTestId(page);
+    const startLabel = await label.textContent();
 
     for (let i = 0; i < 40; i += 1) {
       await page.keyboard.press("ArrowRight");
-      seen.push(await expectSingleTabStopFocused(page, calendar));
+      await expectSingleTabStopFocused(page, calendar);
       months.add((await label.textContent()) ?? "");
     }
     expect(months.size, "40 ArrowRight presses should cross at least one month").toBeGreaterThan(1);
@@ -64,9 +65,9 @@ test.describe("BillingCalendar — focus never leaves the intended tab stop", ()
       await page.keyboard.press("ArrowLeft");
       await expectSingleTabStopFocused(page, calendar);
     }
-    // Walking back the same distance returns to the original day.
-    expect(await activeTestId(page)).toBe(seen[0]?.replace(/$/, "") ? await activeTestId(page) : "");
-    await expect(label).toHaveText((await label.textContent()) ?? "");
+    // Walking back the same distance returns to the original day and month.
+    expect(await activeTestId(page)).toBe(startDay);
+    await expect(label).toHaveText(startLabel ?? "");
   });
 
   test("PageDown/PageUp keep the single tab stop focused for a full year of transitions", async ({
