@@ -352,3 +352,72 @@ Config:
 - `.github/workflows/ci.yml` — `actions/cache` for `~/.bun/install/cache` + `node_modules` keyed on `bun.lock` (with restore-keys), and a separate cache for `~/.cache/ms-playwright`; `bun install --frozen-lockfile` still reconciles the tree, so caching cannot change results.
 
 Note: the four new visual baselines are generated on the first `bun run e2e:update` run (this sandbox has no browser libraries, so they are not committed yet).
+
+## REV034 — WhatsApp deep link validation, focus restoration & visual baselines
+
+### WhatsApp reminder deep link — validation contract
+
+`src/lib/billing.ts` builds and gates every reminder URL. No link ever reaches
+`window.open`/`href` without passing both stages:
+
+1. `buildReminderMessage(bill, profile, today)` — deterministic Indonesian text
+   (fixed formatting, no locale surprises).
+2. `sanitizeReminderText(text)` — normalises `\r\n`/`\r` to `\n`, strips control
+   characters, `\u007f-\u009f`, zero-width and bidi overrides
+   (`\u200b-\u200f`, `\u2028`, `\u2029`, `\u202a-\u202e`, `\ufeff`), trims
+   trailing spaces before newlines, collapses 3+ blank lines to one, and caps
+   the result at `WHATSAPP_TEXT_LIMIT` (4000 chars) with a trailing `…`.
+3. `buildWhatsAppLink(...)` — percent-encodes the sanitised text with
+   `encodeURIComponent` and emits `https://wa.me/<phone>?text=…`, or
+   `https://wa.me/?text=…` when no valid recipient exists.
+4. `validateWhatsAppLink(link)` — format gate returning
+   `{ ok: true, phone, text }` or `{ ok: false, reason }` with reasons:
+
+   | reason | rejected when |
+   | --- | --- |
+   | `malformed` | not a string, empty, unparseable, or contains whitespace / `< > " ' \` \\` |
+   | `protocol` | scheme is not `https:` |
+   | `host` | hostname is not `wa.me` |
+   | `phone` | path is present but not 8–15 digits (normalised `62…` form) |
+   | `text` | `text` param missing or blank |
+   | `length` | `text` exceeds `WHATSAPP_TEXT_LIMIT` |
+
+### Special-character encoding rules
+
+- The full message is encoded once with `encodeURIComponent`, so `&`, `#`, `+`,
+  `=`, `?`, `/`, spaces, newlines and emoji cannot break out of the query
+  parameter. Never concatenate an already-encoded string a second time.
+- Newlines are emitted as `%0A`; `+` stays `%2B` (never a literal `+`, which
+  WhatsApp would render as a space).
+- The phone segment is digits only (`^\d{8,15}$`), normalised to the
+  international `62…` prefix; `+`, spaces and dashes are stripped before use.
+- Currency and totals are pre-formatted integers (Rupiah), so no locale
+  separator can inject a stray `#` or `&`.
+
+### Visual regression baselines — BillingCalendar / BillingSheet
+
+- Baselines live in `e2e/__screenshots__/<spec>-snapshots/`, pinned by
+  `e2e/screenshot.css` (fixed fonts, animations and carets frozen).
+- Tolerance policy from `playwright.config.ts`: `threshold` stays low so a lost
+  focus ring or changed highlight fails, with `maxDiffPixelRatio: 0.005` for
+  anti-aliasing noise only.
+- Required shots: BillingSheet default/branding panel, BillingCalendar month
+  grid (empty + populated), the selected-day highlight, the keyboard focus ring
+  on a day button, and the open due-date popover with its active day.
+- Seed data must come from the `EMPTY_STATE`/seed fixtures and a fixed `today`
+  so month labels and dot markers are deterministic.
+- Regenerate intentionally only, with `bun run e2e:update`, and review the diff
+  image in the PR artifact before committing a new baseline.
+
+### Focus restoration (no `requestAnimationFrame`)
+
+- `BillingCalendar` marks a keyboard move with a ref and refocuses the new
+  `[data-day="selected"]` button inside `useLayoutEffect`, i.e. synchronously
+  after React commits — arrow-key navigation never races a frame.
+- `DueDatePicker` closes through the same layout effect: it focuses the active
+  day when open and returns focus to `billing-due-date-toggle` when it closes.
+- The popover carries `data-escape-scope`; `useModalA11y` skips its document
+  capture handler for that subtree so Escape dismisses only the popover and
+  keeps the parent sheet open.
+- `e2e/billing-calendar-a11y.spec.ts` asserts with `expect(locator).toBeFocused()`
+  and `expect.poll(document.activeElement)` instead of timing assumptions.
