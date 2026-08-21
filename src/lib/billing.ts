@@ -397,7 +397,12 @@ export function buildWhatsAppLink(
   profile: BillingProfile,
   today = new Date(),
 ): string {
-  const text = encodeURIComponent(sanitizeReminderText(buildReminderMessage(bill, profile, today)));
+  // `encodeURIComponent` leaves ' ! ( ) * literal; encode them too so a bill
+  // name with an apostrophe can never trip the strict format gate below.
+  const text = encodeURIComponent(
+    sanitizeReminderText(buildReminderMessage(bill, profile, today)),
+  ).replace(/['!()*]/g, (char) => `%${char.charCodeAt(0).toString(16).toUpperCase()}`);
+
   const phone = normalizePhone(bill.phone);
   return phone ? `https://wa.me/${phone}?text=${text}` : `https://wa.me/?text=${text}`;
 }
