@@ -32,13 +32,17 @@ export function DueDatePicker({
   today?: Date;
 }) {
   const [open, setOpen] = useState(false);
+  // `today` defaults to a fresh Date on every render, so derive stable
+  // primitives before memoising — an object dependency would re-run the
+  // effects forever and never let the popover mount.
+  const todayKey = iso(today.getFullYear(), today.getMonth(), today.getDate());
   const base = useMemo(() => {
     if (isIsoDate(value)) {
       const [y, m] = value.split("-").map(Number) as [number, number];
       return { year: y, month: m - 1 };
     }
-    return { year: today.getFullYear(), month: today.getMonth() };
-  }, [value, today]);
+    return { year: Number(todayKey.slice(0, 4)), month: Number(todayKey.slice(5, 7)) - 1 };
+  }, [value, todayKey]);
   const [cursor, setCursor] = useState(base);
   const gridRef = useRef<HTMLDivElement>(null);
   const toggleRef = useRef<HTMLButtonElement>(null);
@@ -46,7 +50,10 @@ export function DueDatePicker({
   const restoreFocus = useRef(false);
 
   useLayoutEffect(() => {
-    if (open) setCursor(base);
+    if (!open) return;
+    setCursor((prev) =>
+      prev.year === base.year && prev.month === base.month ? prev : base,
+    );
   }, [open, base]);
 
   useLayoutEffect(() => {
@@ -59,6 +66,7 @@ export function DueDatePicker({
       toggleRef.current?.focus();
     }
   }, [open, cursor]);
+
 
   const { year, month } = cursor;
   const daysInMonth = new Date(Date.UTC(year, month + 1, 0)).getUTCDate();
